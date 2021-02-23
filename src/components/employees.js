@@ -1,10 +1,9 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import Axios from 'axios';
+import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
 import { Table, TableContainer, TableHead, TableCell, TableBody, TableRow, Modal, Button, TextField } from '@material-ui/core';
 import { Edit, Delete } from '@material-ui/icons';
-import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
     modal: {
@@ -38,6 +37,7 @@ const Employees = () => {
     const [eliminar, setEliminar] = useState(false);
 
     const [selectEmployee, setSelectEmployee] = useState({
+        id: '',
         name: '',
         birthday: '',
         address: '',
@@ -65,6 +65,7 @@ const Employees = () => {
     const peticionPost = async () => {
         await axios.post(urlApi, selectEmployee)
             .then(response => {
+                console.log(`Body ${response.data}`)
                 setEmployees(employees.concat(response.data))
                 modalInsertar()
             })
@@ -96,9 +97,7 @@ const Employees = () => {
             })
     }
 
-    useEffect(async () => {
-        getEmployees();
-    }, [])
+
 
     const modalInsertar = () => {
         setInsertar(!insertar);
@@ -117,10 +116,16 @@ const Employees = () => {
         (caso === 'Editar') ? modalEditar() : modalEliminar()
     }
 
+    useEffect(async () => {
+        getEmployees();
+    }, [])
+
     //Body's
     const bodyInsertar = (
         <div className={styles.modal}>
             <h3>Agregar un nuevo empleado</h3>
+            <TextField name="id" className={styles.inputMaterial} label="Id" onChange={handleChange} />
+            <br />
             <TextField name="name" className={styles.inputMaterial} label="Name" onChange={handleChange} />
             <br />
             <TextField name="birthday" className={styles.inputMaterial} label="Birthday" onChange={handleChange} />
@@ -132,7 +137,7 @@ const Employees = () => {
             <TextField name="status" className={styles.inputMaterial} label="Status" onChange={handleChange} />
             <br /><br />
             <div align="right">
-                <Button color="primary" onClick={() => peticionPost()}>Insertar</Button>
+                <Button color="primary" onClick={() => peticionPost}>Insertar</Button>
                 <Button onClick={() => modalInsertar()}>Cancelar</Button>
             </div>
         </div>
@@ -140,6 +145,7 @@ const Employees = () => {
 
     const bodyEditar = (
         <div className={styles.modal}>
+            {console.log(selectEmployee)}
             <h3>Editar Consola</h3>
             <TextField name="name" className={styles.inputMaterial} label="Name" onChange={handleChange} value={selectEmployee && selectEmployee.name} />
             <br />
@@ -149,7 +155,7 @@ const Employees = () => {
             <br />
             <TextField name="phone" className={styles.inputMaterial} label="Phone" onChange={handleChange} value={selectEmployee && selectEmployee.phone} />
             <br />
-            <TextField name="status" className={styles.inputMaterial} label="Status" onChange={handleChange} value={selectEmployee && selectEmployee.status} />
+            <TextField name="statusE" className={styles.inputMaterial} label="Status" onChange={handleChange} value={selectEmployee && selectEmployee.statusE} />
             <br /><br />
             <div align="right">
                 <Button color="primary" onClick={() => peticionPut()}>Editar</Button>
